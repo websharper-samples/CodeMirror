@@ -1,13 +1,69 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <title>@sampleName@</title>
-        <link rel="stylesheet" href="Content/@sampleName@.css" />
-        <script src="Content/@sampleName@.head.js"></script>
-    </head>
-    <body>
-        <div id="main"></div>
-        <script src="Content/@sampleName@.js"></script>
-    </body>
+<head>
+    <meta charset="utf-8" />
+    <title>CodeMirror</title>
+    <link rel="stylesheet" href="Content/CodeMirror.css" />
+    <style>
+        .match-highlight
+        {
+            background-color: #f0f0f0;
+        }
+    </style>
+    <script src="Content/CodeMirror.head.js"></script>
+</head>
+<body>
+    <h1>CodeMirror sample</h1>
+    <div ws-hole="body"></div>
+    <textarea id="editor">
+// Demo code (the actual new parser character stream implementation)
+
+function StringStream(string) {
+  this.pos = 0;
+  this.string = string;
+}
+
+StringStream.prototype = {
+  done: function() {return this.pos >= this.string.length;},
+  peek: function() {return this.string.charAt(this.pos);},
+  next: function() {
+    if (this.pos < this.string.length)
+      return this.string.charAt(this.pos++);
+  },
+  eat: function(match) {
+    var ch = this.string.charAt(this.pos);
+    if (typeof match == "string") var ok = ch == match;
+    else var ok = ch && match.test ? match.test(ch) : match(ch);
+    if (ok) {this.pos++; return ch;}
+  },
+  eatWhile: function(match) {
+    var start = this.pos;
+    while (this.eat(match));
+    if (this.pos > start) return this.string.slice(start, this.pos);
+  },
+  backUp: function(n) {this.pos -= n;},
+  column: function() {return this.pos;},
+  eatSpace: function() {
+    var start = this.pos;
+    while (/\s/.test(this.string.charAt(this.pos))) this.pos++;
+    return this.pos - start;
+  },
+  match: function(pattern, consume, caseInsensitive) {
+    if (typeof pattern == "string") {
+      function cased(str) {return caseInsensitive ? str.toLowerCase() : str;}
+      if (cased(this.string).indexOf(cased(pattern), this.pos) == this.pos) {
+        if (consume !== false) this.pos += str.length;
+        return true;
+      }
+    }
+    else {
+      var match = this.string.slice(this.pos).match(pattern);
+      if (match && consume !== false) this.pos += match[0].length;
+      return match;
+    }
+  }
+};
+    </textarea>
+    <script src="Content/CodeMirror.js"></script>
+</body>
 </html>
