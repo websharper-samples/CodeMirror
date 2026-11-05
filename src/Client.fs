@@ -4,6 +4,7 @@ open WebSharper
 open WebSharper.JavaScript
 open WebSharper.UI
 open WebSharper.UI.Html
+open WebSharper.UI.Templating
 open WebSharper.UI.Client
 open WebSharper.CodeMirror
 
@@ -11,6 +12,8 @@ open WebSharper.CodeMirror
 /// between the light and dark themes.
 [<JavaScript>]
 module Client =
+
+    type Template = Templating.Template<"wwwroot/index.html", ClientLoad.FromDocument>
 
     type Snippet =
         {
@@ -173,38 +176,27 @@ Write **F#** in the browser with *WebSharper*.
                 language.Value <- snippet.Id
                 create ())
 
-        let themeButton =
-            button [
-                attr.``class`` "btn btn-ghost btn-small"
-                on.click (fun _ _ ->
-                    dark.Value <- not dark.Value
-                    create ())
-            ] [
-                Doc.BindView text (
-                    dark.View
-                    |> View.Map (fun d -> if d then "Light theme" else "Dark theme"))
+        let languages =
+            Doc.Concat [
+                for snippet in snippets -> languageButton snippet
             ]
 
-        section [ attr.``class`` "card" ] [
-            div [ attr.``class`` "card-head" ] [
-                div [] [
-                    h2 [] [ text "CodeMirror 6" ]
-                    p [] [ text "A full-featured editor, configured from F#." ]
-                ]
-            ]
-            div [ attr.``class`` "card-body" ] [
-                div [ attr.``class`` "toolbar" ] [
-                    div [ attr.``class`` "lang-bar" ] [
-                        for snippet in snippets -> languageButton snippet
-                    ]
-                    themeButton
-                ]
-                div [
-                    attr.``class`` "editor-wrap"
-                    on.afterRender (fun el ->
-                        host.Value <- Some el
-                        create ())
-                ] []
-            ]
-        ]
-        |> Doc.RunById "main"
+        let theme =
+            dark.View
+            |> View.Map (fun d -> if d then "Light theme" else "Dark theme")
+
+        let editorHost =
+            div [
+                on.afterRender (fun el ->
+                    host.Value <- Some el
+                    create ())
+            ] []
+
+        Template()
+            .Languages(languages)
+            .Theme(theme)
+            .Editor(editorHost)
+            .ToggleTheme(fun _ ->
+                dark.Value <- not dark.Value
+                create ())
+            .Bind()

@@ -15,7 +15,7 @@
         <span class="app-logo"><i class="fa-solid fa-i-cursor"></i></span>
         <div class="app-titles">
           <h1>CodeMirror</h1>
-          <p>A code editor with WebSharper</p>
+          <p>A code editor with <a href="https://websharper.com" target="_blank" rel="noreferrer">WebSharper</a></p>
         </div>
       </div>
       <a class="btn btn-ghost" href="https://github.com/websharper-samples/CodeMirror" target="_blank" rel="noreferrer">
@@ -23,7 +23,23 @@
       </a>
     </header>
 
-    <main id="main" class="content"></main>
+    <main class="content">
+      <section class="card">
+        <div class="card-head">
+          <div>
+            <h2>CodeMirror 6</h2>
+            <p>A full-featured editor, configured from F#.</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="toolbar">
+            <div class="lang-bar" ws-hole="Languages"></div>
+            <button class="btn btn-ghost btn-small" ws-onclick="ToggleTheme" ws-hole="Theme"></button>
+          </div>
+          <div class="editor-wrap" ws-hole="Editor"></div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script type="module" src="Scripts/CodeMirror.min.js"></script>
