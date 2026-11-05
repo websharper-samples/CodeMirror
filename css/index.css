@@ -77,6 +77,16 @@ body {
   color: var(--muted);
 }
 
+.app-titles p a {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.app-titles p a:hover {
+  text-decoration: underline;
+}
+
 .btn {
   display: inline-flex;
   align-items: center;
